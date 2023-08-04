@@ -1,0 +1,13 @@
+# This file contains values from Cookiecutter
+
+default_context:
+  project_name: "api-connectors"
+  project_description: "'api-connectors' is a Python package created to handle API connections."
+  organization: "jpprina-dev"
+  license: "MIT"
+  minimal_python_version: 3.9
+  github_name: "jpprina-dev"
+  email: "jpprina@gmail.com"
+  version: "0.1.0"
+  line_length: "100"
+  create_example_template: "none"
