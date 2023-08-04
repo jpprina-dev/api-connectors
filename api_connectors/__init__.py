@@ -1,8 +1,8 @@
 # type: ignore[attr-defined]
 """'api-connectors' is a Python package created to handle API connections."""
-
-import sys
 from importlib import metadata as importlib_metadata
+
+from api_connectors.base import APIClient
 
 
 def get_version() -> str:
@@ -13,3 +13,5 @@ def get_version() -> str:
 
 
 version: str = get_version()
+
+__all__ = ["APIClient"]
