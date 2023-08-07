@@ -135,7 +135,7 @@ class KairosDBAPI(APIClient):
         .. seealso:: \
             https://kairosdb.github.io/docs/restapi/DeleteMetric.html
         """
-        return self._delete("metric/%s" % metric_name)
+        return self.delete("metric/%s" % metric_name)
 
     def delete_datapoints(self, data):
         """Delete metric data points
