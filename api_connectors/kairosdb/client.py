@@ -3,7 +3,7 @@ import fnmatch
 from api_connectors.APIClient import APIClient
 
 
-class KairosDBAPI(APIClient):
+class KairosDBAPIClient(APIClient):
     """KairosDB API interface
 
     .. attribute:: version

@@ -1,4 +1,4 @@
 """ KairosDB API interface Module"""
-from api_connectors.kairosdb.client import KairosDBAPI
+from api_connectors.kairosdb.client import KairosDBAPIClient
 
-__all__ = ["KairosDBAPI"]
+__all__ = ["KairosDBAPIClient"]
