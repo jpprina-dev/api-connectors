@@ -37,7 +37,7 @@ class APIClient:
         http method *DELETE*.
     """
 
-    def __init__(self, url, api_endpoint, verify=None, timeout=None):
+    def __init__(self, url, api_endpoint=None, verify=None, timeout=None):
         """Initialization method"""
         self.verify = verify
         self.timeout = timeout
