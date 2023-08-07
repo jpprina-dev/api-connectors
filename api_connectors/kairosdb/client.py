@@ -1,6 +1,6 @@
 import fnmatch
 
-from api_connectors.base import APIClient
+from api_connectors.APIClient import APIClient
 
 
 class KairosDBAPI(APIClient):

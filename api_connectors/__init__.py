@@ -2,7 +2,7 @@
 """'api-connectors' is a Python package created to handle API connections."""
 from importlib import metadata as importlib_metadata
 
-from api_connectors.base import APIClient
+from api_connectors import APIClient
 
 
 def get_version() -> str:
