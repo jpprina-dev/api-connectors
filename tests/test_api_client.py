@@ -30,10 +30,10 @@ class TestAPIClient(unittest.TestCase):
     @patch("api_connectors.APIClient.requests.Session")
     def test_get(self, session_mock):
         client = create_api_client()
-        client.get(path=TEST_PATH, data=TEST_DATA)
+        client.post(path=TEST_PATH, data=TEST_DATA)
         session_mock.return_value.request.assert_called_once()
         session_mock.return_value.request.assert_called_with(
-            "GET",
+            "POST",
             f"{TEST_URL}/{TEST_ENDPOINT}/{TEST_PATH}",
             data=json.dumps(TEST_DATA),
             headers=TEST_HEADERS,
