@@ -104,8 +104,8 @@ class KairosDBAPI(APIClient):
         """
         x_metrics = []
 
-        if exclude_matches:
-            [x_metrics.extend(fnmatch.filter(self.metricnames, match)) for match in exclude_matches]
+        for match in exclude_matches:
+            x_metrics.extend(fnmatch.filter(self.metricnames, match))
 
         matched_metrics = []
         for match in matches:
