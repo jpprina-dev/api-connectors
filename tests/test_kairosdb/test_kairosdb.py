@@ -1,45 +1,54 @@
 """Tests for APIClient base class."""
 import json
 import unittest
+import pytest
 from unittest.mock import patch
-
-from api_connectors.APIClient import APIClient
+import requests
+from api_connectors.kairosdb import KairosDBAPIClient
 
 TEST_URL = "http://test-url"
-TEST_ENDPOINT = "api"
-TEST_SSL = False
-TEST_TIMEOUT = 1
-TEST_DATA = {"test": "test_data"}
-TEST_PATH = "test/path"
-TEST_HEADERS = {"Content-Type": "application/json", "Accept": "application/json"}
+TEST_ENDPOINT = "api/v1"
+TEST_PORT = 8080
+TEST_SSL = None
+TEST_TIMEOUT = None
+TEST_HEADERS = {"Content-Type": "application/json", "Accept": "application/json","User-Agent": "python-kairosdb"}
 
+
+def build_url(path):
+    return f"{TEST_URL}/{TEST_ENDPOINT}:{TEST_PORT}/{path}"
 
 def create_api_client():
-    return APIClient(TEST_URL, TEST_ENDPOINT, TEST_SSL, TEST_TIMEOUT)
+    return KairosDBAPIClient(TEST_URL)
+
+@pytest.fixture
+def example_response():
+    with open('api_connector/resources/samples/sample_response.json', 'r+') as sample_file:
+        sample_response = json.loads(sample_file)
+    return sample_response
 
 
 class TestKairosClient(unittest.TestCase):
-    @patch("api_connectors.APIClient.APIClient.request")
-    def test_request(self, mock_request):
-        client = create_api_client()
-        mock_request.side_effect = {"return_code": 200, "status": "success"}
-        client.get(path=TEST_PATH, data=TEST_DATA)
-        mock_request.assert_called_once()
-        mock_request.assert_called_with(path=TEST_PATH, data=TEST_DATA, method="GET")
-
     @patch("api_connectors.APIClient.requests.Session")
-    def test_get(self, session_mock):
+    def test_get_version(self, mock_request):
         client = create_api_client()
-        client.post(path=TEST_PATH, data=TEST_DATA)
-        session_mock.return_value.request.assert_called_once()
-        session_mock.return_value.request.assert_called_with(
-            "POST",
-            f"{TEST_URL}/{TEST_ENDPOINT}/{TEST_PATH}",
-            data=json.dumps(TEST_DATA),
+        mock_content = {"version": "KairosDB 0.9.4"}
+        mock_request.return_value.request.return_value = requests.Response(**{
+            "status_code": 200,
+            "status": "success",
+            "content": mock_content
+            })
+        response = client.version()
+        self.assertEqual(mock_content["version"], response)
+        mock_request.assert_called_once()
+        mock_request.assert_called_with(
+            "GET",
+            build_url("version"),
+            data={},
             headers=TEST_HEADERS,
             timeout=TEST_TIMEOUT,
             verify=TEST_SSL,
-        )
+            )
+
 
 
 if __name__ == "__main__":

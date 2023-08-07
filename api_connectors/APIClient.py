@@ -1,7 +1,11 @@
 import json
 from functools import partial
 
+import logging
 import requests
+
+
+logger = logging.getLogger(__name__)
 
 
 class APIClient:
@@ -11,7 +15,6 @@ class APIClient:
     This client is using :mod:`requests` package. Please see
     http://docs.python-requests.org/ for more information.
 
-    :param str url: API host url
     :param str api_endpoint: API endpoint
     :param bool verify: Control SSL certificate validation
     :param int timeout: Request timeout in seconds
@@ -37,12 +40,11 @@ class APIClient:
         http method *DELETE*.
     """
 
-    def __init__(self, url, api_endpoint=None, verify=None, timeout=None):
+    def __init__(self, api_endpoint, verify=None, timeout=None):
         """Initialization method"""
         self.verify = verify
         self.timeout = timeout
 
-        self.url = url
         self.api_endpoint = api_endpoint
 
         self.request_headers = {"Content-Type": "application/json", "Accept": "application/json"}
@@ -67,7 +69,7 @@ class APIClient:
         to :meth:`request` method of :class:`requests.Session` object.
         """
         if not path.startswith("http://") and not path.startswith("https://"):
-            url = f"{self.url}/{self.api_endpoint}/{path}"
+            url = f"{self.api_endpoint}/{path}"
         else:
             url = path
 
@@ -83,6 +85,7 @@ class APIClient:
             verify=self.verify,
             **kwargs,
         )
+        logger.debug(f"API response {response}")
 
         if response.status_code == 204:
             return {"return_code": response.status_code, "status": "success"}

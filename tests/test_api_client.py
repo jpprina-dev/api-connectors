@@ -15,14 +15,14 @@ TEST_HEADERS = {"Content-Type": "application/json", "Accept": "application/json"
 
 
 def create_api_client():
-    return APIClient(TEST_URL, TEST_ENDPOINT, TEST_SSL, TEST_TIMEOUT)
+    return APIClient(f"{TEST_URL}/{TEST_ENDPOINT}", TEST_SSL, TEST_TIMEOUT)
 
 
 class TestAPIClient(unittest.TestCase):
     @patch("api_connectors.APIClient.APIClient.request")
     def test_request(self, mock_request):
         client = create_api_client()
-        mock_request.side_effect = {"return_code": 200, "status": "success"}
+        mock_request.side_effect = {"status_code": 200, "status": "success"}
         client.get(path=TEST_PATH, data=TEST_DATA)
         mock_request.assert_called_once()
         mock_request.assert_called_with(path=TEST_PATH, data=TEST_DATA, method="GET")
