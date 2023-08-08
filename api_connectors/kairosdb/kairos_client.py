@@ -59,29 +59,27 @@ class KairosDBAPIClient(APIClient):
         self.api_endpoint = f"{self.api_endpoint}:{port}/api/v{api_version}"
 
         self._metricnames = None
-        self._tagnames = None
-        self._tagvalues = None
-        self._log_header = "KAIROSDB API"
+        self._log_header = "[KAIROSDB API]"
 
     @property
     def version(self):
         """KairosDB version"""
         response = self.get("version")
-        logger.debug(f"[{self._log_header} version] {response}")
+        logger.debug(f"{self._log_header} version: {response}")
         return response.get("version")
 
     @property
     def health_status(self):
         """KairosDB health status"""
         response = self.get("health/status")
-        logger.debug(f"[{self._log_header} health_status] {response}")
+        logger.debug(f"{self._log_header} health_status: {response}")
         return response
 
     @property
     def health_check(self):
         """KairosDB health check"""
         response = self.get("health/check")
-        logger.debug(f"[{self._log_header} health_check] {response}")
+        logger.debug(f"{self._log_header} health_check: {response}")
         return response
 
     @property
@@ -89,25 +87,9 @@ class KairosDBAPIClient(APIClient):
         """Metric names"""
         if not self._metricnames:
             response = self.get("metricnames")
-            logger.debug(f"[{self._log_header} metricnames] {response}")
+            logger.debug(f"{self._log_header} metricnames: {response}")
             self._metricnames = response.get("results")
         return self._metricnames
-
-    @property
-    def tagnames(self):
-        """Tag names"""
-        if not self._tagnames:
-            response = self.get("tagnames")
-            logger.debug(f"[{self._log_header} metricnames] {response}")
-            self._metricnames = response.get("results")
-        return self._tagnames
-
-    @property
-    def tagvalues(self):
-        """Tag values"""
-        if not self._tagvalues:
-            self._tagvalues = self.get("tagvalues").get("results")
-        return self._tagvalues
 
     def search_metrics(self, matches, exclude_matches=None):
         """Search KairosDB metrics using glob matches
@@ -138,7 +120,9 @@ class KairosDBAPIClient(APIClient):
         .. seealso:: \
             https://kairosdb.github.io/docs/restapi/QueryMetrics.html
         """
-        return self.post("datapoints/query", data=data)
+        response = self.post("datapoints/query", data=data)
+        logger.debug(f"{self._log_header} query_metrics: {response}")
+        return response
 
     def delete_metric(self, metric_name):
         """Delete a metric and all data points associated with the metric
@@ -148,7 +132,7 @@ class KairosDBAPIClient(APIClient):
         .. seealso:: \
             https://kairosdb.github.io/docs/restapi/DeleteMetric.html
         """
-        return self.delete("metric/%s" % metric_name)
+        return self.delete(f"metric/{metric_name}")
 
     def delete_datapoints(self, data):
         """Delete metric data points
