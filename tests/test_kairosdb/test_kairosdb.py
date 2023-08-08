@@ -54,6 +54,41 @@ class TestKairosClient(unittest.TestCase):
             verify=TEST_SSL,
         )
 
+    @patch("api_connectors.APIClient.requests.Session")
+    def test_get_health_status(self, mock_request):
+        client = create_api_client()
+        mock_content = ["JVM-Thread-Deadlock: OK", "Datastore-Query: OK"]
+        mock_request.return_value.request.return_value = MagicMock(
+            status_code=200, json=lambda: mock_content, text=str(mock_content)
+        )
+        response = client.health_status
+        self.assertEqual(str(mock_content), response["response"])
+        mock_request.return_value.request.assert_called_once()
+        mock_request.return_value.request.assert_called_with(
+            "GET",
+            build_url("health/status"),
+            data=json.dumps({}),
+            headers=TEST_HEADERS,
+            timeout=TEST_TIMEOUT,
+            verify=TEST_SSL,
+        )
+
+    @patch("api_connectors.APIClient.requests.Session")
+    def test_get_health_check(self, mock_request):
+        client = create_api_client()
+        mock_request.return_value.request.return_value = MagicMock(status_code=204)
+        response = client.health_check
+        self.assertEqual(204, response["return_code"])
+        mock_request.return_value.request.assert_called_once()
+        mock_request.return_value.request.assert_called_with(
+            "GET",
+            build_url("health/check"),
+            data=json.dumps({}),
+            headers=TEST_HEADERS,
+            timeout=TEST_TIMEOUT,
+            verify=TEST_SSL,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

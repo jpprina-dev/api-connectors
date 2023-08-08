@@ -66,18 +66,22 @@ class KairosDBAPIClient(APIClient):
     def version(self):
         """KairosDB version"""
         response = self.get("version")
-        logger.debug(f"[KAIROSDB VERSION] {response}")
+        logger.debug(f"[KAIROSDB version] {response}")
         return response.get("version")
 
     @property
     def health_status(self):
         """KairosDB health status"""
-        return self.get("health/status")
+        response = self.get("health/status")
+        logger.debug(f"[KAIROSDB health_status] {response}")
+        return response
 
     @property
     def health_check(self):
         """KairosDB health check"""
-        return self.get("health/check")
+        response = self.get("health/check")
+        logger.debug(f"[KAIROSDB health_check] {response}")
+        return response
 
     @property
     def metricnames(self):
