@@ -61,40 +61,45 @@ class KairosDBAPIClient(APIClient):
         self._metricnames = None
         self._tagnames = None
         self._tagvalues = None
+        self._log_header = "KAIROSDB API"
 
     @property
     def version(self):
         """KairosDB version"""
         response = self.get("version")
-        logger.debug(f"[KAIROSDB version] {response}")
+        logger.debug(f"[{self._log_header} version] {response}")
         return response.get("version")
 
     @property
     def health_status(self):
         """KairosDB health status"""
         response = self.get("health/status")
-        logger.debug(f"[KAIROSDB health_status] {response}")
+        logger.debug(f"[{self._log_header} health_status] {response}")
         return response
 
     @property
     def health_check(self):
         """KairosDB health check"""
         response = self.get("health/check")
-        logger.debug(f"[KAIROSDB health_check] {response}")
+        logger.debug(f"[{self._log_header} health_check] {response}")
         return response
 
     @property
     def metricnames(self):
         """Metric names"""
         if not self._metricnames:
-            self._metricnames = self.get("metricnames").get("results")
+            response = self.get("metricnames")
+            logger.debug(f"[{self._log_header} metricnames] {response}")
+            self._metricnames = response.get("results")
         return self._metricnames
 
     @property
     def tagnames(self):
         """Tag names"""
         if not self._tagnames:
-            self._tagnames = self.get("tagnames").get("results")
+            response = self.get("tagnames")
+            logger.debug(f"[{self._log_header} metricnames] {response}")
+            self._metricnames = response.get("results")
         return self._tagnames
 
     @property

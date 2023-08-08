@@ -84,12 +84,12 @@ class APIClient:
             verify=self.verify,
             **kwargs,
         )
+        logger.debug(f"API RESPONSE {response}")
 
         if response.status_code == 204:
             return {"return_code": response.status_code, "status": "success"}
 
         try:
-            logger.debug(f"API response {response.json()}")
             response_data = {"return_code": response.status_code}
             response_data.update(response.json())
             return response_data

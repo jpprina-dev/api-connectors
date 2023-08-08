@@ -89,6 +89,25 @@ class TestKairosClient(unittest.TestCase):
             verify=TEST_SSL,
         )
 
+    @patch("api_connectors.APIClient.requests.Session")
+    def test_get_metrics(self, mock_request):
+        client = create_api_client()
+        mock_content = {"results": ["archive_file_search", "archive_file_tracked"]}
+        mock_request.return_value.request.return_value = MagicMock(
+            status_code=200, json=lambda: mock_content
+        )
+        response = client.metricnames
+        self.assertEqual(mock_content["results"], response)
+        mock_request.return_value.request.assert_called_once()
+        mock_request.return_value.request.assert_called_with(
+            "GET",
+            build_url("metricnames"),
+            data=json.dumps({}),
+            headers=TEST_HEADERS,
+            timeout=TEST_TIMEOUT,
+            verify=TEST_SSL,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
