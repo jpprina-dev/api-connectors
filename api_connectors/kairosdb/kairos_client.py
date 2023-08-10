@@ -114,7 +114,7 @@ class KairosDBAPIClient(APIClient):
 
         return matched_metrics
 
-    def query_metrics_json(self, data):
+    def query_metrics_by_json(self, data):
         """Get metrics data points by KairosDB json
 
         :param dict data: Data to post for query
@@ -136,24 +136,34 @@ class KairosDBAPIClient(APIClient):
 
         :param metrics: metric or metrics to query
         :type metrics: Union[str, List[str]]
-        :param start_datetime: start date and time to query in '%d/%m/%Y %H:%M:%S' format
+        :param start_datetime: start date and time to query in '%d-%m-%Y %H:%M:%S' format
         :type start_datetime: str
-        :param end_datetime: end date and time to query in '%d/%m/%Y %H:%M:%S' format
+        :param end_datetime: end date and time to query in '%d-%m-%Y %H:%M:%S' format
         :type end_datetime: str
         :return: Metric data points as :class:`dict`
         :rtype: dict
         """
-        if not isinstance(metrics, list):
+        if not isinstance(metrics, str) and not isinstance(metrics, list):
+            raise ValueError("Must be a str or List[str] with metric(s) to query")
+        elif not isinstance(metrics, list):
             metrics = [metrics]
+        elif not all(isinstance(elem, str) for elem in metrics):
+            raise ValueError("Must be a List[str] with metrics to query")
+
         # TODO: Update the whole function in a Pydantic manner
-        start_ms = datetime.strptime(start_datetime, "%d/%m/%Y %H:%M:%S").timestamp() * 1000
-        end_ms = datetime.strptime(end_datetime, "%d/%m/%Y %H:%M:%S").timestamp() * 1000
-
-        data = {"plugins": [], "cache_time": 0, "start_absolute": start_ms, "end_absolute": end_ms}
-
+        start_ms: int = int(
+            datetime.strptime(start_datetime, "%d-%m-%Y %H:%M:%S").timestamp() * 1000
+        )
+        end_ms: int = int(datetime.strptime(end_datetime, "%d-%m-%Y %H:%M:%S").timestamp() * 1000)
+        data = {}
         data.update({"metrics": [{"tags": {}, "name": name} for name in metrics]})
+        data.update(
+            {"plugins": [], "cache_time": 0, "start_absolute": start_ms, "end_absolute": end_ms}
+        )
         response = self.post("datapoints/query", data=data)
         logger.debug(f"{self._log_header} query_metrics: {response}")
+        # TODO: return_code not handled
+        response.pop("return_code")
         return response
 
     def delete_metric(self, metric_name):

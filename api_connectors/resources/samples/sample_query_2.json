@@ -3,6 +3,10 @@
     {
       "tags": {},
       "name": "abc.123"
+    },
+    {
+      "tags": {},
+      "name": "xyz.456"
     }
   ],
   "plugins": [],

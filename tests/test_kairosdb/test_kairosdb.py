@@ -17,6 +17,9 @@ TEST_HEADERS = {
     "Accept": "application/json",
     "User-Agent": "python-kairosdb",
 }
+TEST_METRIC_NAMES = ["abc.123", "xyz.456"]
+TEST_START_DATETIME = "03-08-2023 12:13:14"
+TEST_END_DATETIME = "10-08-2023 12:13:14"
 
 
 def build_url(path):
@@ -27,19 +30,12 @@ def create_api_client():
     return KairosDBAPIClient(TEST_URL)
 
 
-def sample_query():
+def sample_json(file_name):
     with open(
-        Path.joinpath(ROOT_DIR, "api_connectors/resources/samples/sample_query.json"), "r+"
+        Path.joinpath(ROOT_DIR, f"api_connectors/resources/samples/{file_name}"), "r+"
     ) as sample_file:
         query = json.load(sample_file)
     return query
-
-
-# @pytest.fixture
-# def sample_response():
-#     with open("api_connector/resources/samples/sample_response.json", "r+") as sample_file:
-#         response = json.loads(sample_file)
-#     return response
 
 
 class TestKairosClient(unittest.TestCase):
@@ -117,10 +113,10 @@ class TestKairosClient(unittest.TestCase):
         )
 
     @patch("api_connectors.APIClient.requests.Session")
-    def test_post_metrics(self, mock_request):
+    def test_post_metrics_by_json(self, mock_request):
         client = create_api_client()
-        mocked_query = sample_query()
-        client.query_metrics_json(data=mocked_query)
+        mocked_query = sample_json("sample_query.json")
+        client.query_metrics_by_json(data=mocked_query)
         mock_request.return_value.request.assert_called_once()
         mock_request.return_value.request.assert_called_with(
             "POST",
@@ -130,6 +126,48 @@ class TestKairosClient(unittest.TestCase):
             timeout=TEST_TIMEOUT,
             verify=TEST_SSL,
         )
+
+    @patch("api_connectors.APIClient.requests.Session")
+    def test_post_metrics_one_metric(self, mock_request):
+        client = create_api_client()
+        mocked_query = sample_json("sample_query_1.json")
+        mocked_respose = sample_json("sample_response_1.json")
+        mock_request.return_value.request.return_value = MagicMock(
+            status_code=200, json=lambda: mocked_respose
+        )
+        response = client.query_metrics(
+            TEST_METRIC_NAMES[0], TEST_START_DATETIME, TEST_END_DATETIME
+        )
+        mock_request.return_value.request.assert_called_once()
+        mock_request.return_value.request.assert_called_with(
+            "POST",
+            build_url("datapoints/query"),
+            data=json.dumps(mocked_query),
+            headers=TEST_HEADERS,
+            timeout=TEST_TIMEOUT,
+            verify=TEST_SSL,
+        )
+        self.assertEqual(response, mocked_respose)
+
+    @patch("api_connectors.APIClient.requests.Session")
+    def test_post_metrics_two_mnetrics(self, mock_request):
+        client = create_api_client()
+        mocked_query = sample_json("sample_query_2.json")
+        mocked_respose = sample_json("sample_response_2.json")
+        mock_request.return_value.request.return_value = MagicMock(
+            status_code=200, json=lambda: mocked_respose
+        )
+        response = client.query_metrics(TEST_METRIC_NAMES, TEST_START_DATETIME, TEST_END_DATETIME)
+        mock_request.return_value.request.assert_called_once()
+        mock_request.return_value.request.assert_called_with(
+            "POST",
+            build_url("datapoints/query"),
+            data=json.dumps(mocked_query),
+            headers=TEST_HEADERS,
+            timeout=TEST_TIMEOUT,
+            verify=TEST_SSL,
+        )
+        self.assertEqual(response, mocked_respose)
 
 
 if __name__ == "__main__":
