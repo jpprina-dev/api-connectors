@@ -4,6 +4,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from api_connectors.kairosdb import KairosDBAPIClient
 from tests import ROOT_DIR
 
@@ -172,6 +174,16 @@ class TestKairosClient(unittest.TestCase):
         )
         mocked_respose.update({"return_code": status_code})
         self.assertEqual(response, mocked_respose)
+
+    def test_post_metrics_wrong_arg_type_value_error_1(self):
+        client = create_api_client()
+        with pytest.raises(ValueError):
+            response = client.query_metrics(123, TEST_START_DATETIME, TEST_END_DATETIME)
+
+    def test_post_metrics_wrong_arg_type_value_error_2(self):
+        client = create_api_client()
+        with pytest.raises(ValueError):
+            response = client.query_metrics([123, 234], TEST_START_DATETIME, TEST_END_DATETIME)
 
 
 if __name__ == "__main__":

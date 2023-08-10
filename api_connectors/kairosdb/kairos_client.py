@@ -143,11 +143,15 @@ class KairosDBAPIClient(APIClient):
         :return: Metric data points as :class:`dict`
         :rtype: dict
         """
+        _metrics = []
         if not isinstance(metrics, str) and not isinstance(metrics, list):
             raise ValueError("Must be a str or List[str] with metric(s) to query")
-        elif not isinstance(metrics, list):
-            metrics = [metrics]
-        elif not all(isinstance(elem, str) for elem in metrics):
+        elif isinstance(metrics, list):
+            _metrics.extend(metrics)
+        else:
+            _metrics.append(metrics)
+
+        if not all(isinstance(elem, str) for elem in _metrics):
             raise ValueError("Must be a List[str] with metrics to query")
 
         # TODO: Update the whole function in a Pydantic manner
@@ -156,7 +160,7 @@ class KairosDBAPIClient(APIClient):
         )
         end_ms: int = int(datetime.strptime(end_datetime, "%d-%m-%Y %H:%M:%S").timestamp() * 1000)
         data = {}
-        data.update({"metrics": [{"tags": {}, "name": name} for name in metrics]})
+        data.update({"metrics": [{"tags": {}, "name": name} for name in _metrics]})
         data.update(
             {"plugins": [], "cache_time": 0, "start_absolute": start_ms, "end_absolute": end_ms}
         )
