@@ -178,12 +178,12 @@ class TestKairosClient(unittest.TestCase):
     def test_post_metrics_wrong_arg_type_value_error_1(self):
         client = create_api_client()
         with pytest.raises(ValueError):
-            response = client.query_metrics(123, TEST_START_DATETIME, TEST_END_DATETIME)
+            client.query_metrics(123, TEST_START_DATETIME, TEST_END_DATETIME)
 
     def test_post_metrics_wrong_arg_type_value_error_2(self):
         client = create_api_client()
         with pytest.raises(ValueError):
-            response = client.query_metrics([123, 234], TEST_START_DATETIME, TEST_END_DATETIME)
+            client.query_metrics([123, 234], TEST_START_DATETIME, TEST_END_DATETIME)
 
 
 if __name__ == "__main__":
