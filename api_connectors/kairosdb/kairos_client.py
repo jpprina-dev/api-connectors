@@ -159,11 +159,14 @@ class KairosDBAPIClient(APIClient):
             datetime.strptime(start_datetime, "%d-%m-%Y %H:%M:%S").timestamp() * 1000
         )
         end_ms: int = int(datetime.strptime(end_datetime, "%d-%m-%Y %H:%M:%S").timestamp() * 1000)
-        data = {}
-        data.update({"metrics": [{"tags": {}, "name": name} for name in _metrics]})
-        data.update(
-            {"plugins": [], "cache_time": 0, "start_absolute": start_ms, "end_absolute": end_ms}
-        )
+        data = {
+            "metrics": [{"tags": {}, "name": name} for name in _metrics],
+            "plugins": [],
+            "cache_time": 0,
+            "start_absolute": start_ms,
+            "end_absolute": end_ms,
+        }
+
         response = self.post("datapoints/query", data=data)
         logger.debug(f"{self._log_header} query_metrics: {response}")
         # TODO: return_code not handled
