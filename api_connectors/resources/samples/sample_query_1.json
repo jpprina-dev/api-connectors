@@ -1,15 +1,12 @@
 {
   "metrics": [
-  {
-    "tags": {},
-    "name": "1220006.SIN.E1086_TOT",
-    "limit": "10000"
-  }
+    {
+      "tags": {},
+      "name": "1220006.SIN.E1086_TOT"
+    }
   ],
   "plugins": [],
   "cache_time": 0,
-  "start_relative": {
-  "value": "1",
-  "unit": "hours"
-  }
+  "start_absolute": 1691031600000,
+  "end_absolute": 1691636400000
 }

@@ -111,8 +111,8 @@ class KairosDBAPIClient(APIClient):
 
         return matched_metrics
 
-    def query_metrics(self, data):
-        """Get metrics data points
+    def query_metrics_json(self, data):
+        """Get metrics data points by kairos json
 
         :param dict data: Data to post for query
         :return: Metric data points as :class:`dict`

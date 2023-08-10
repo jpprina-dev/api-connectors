@@ -120,7 +120,7 @@ class TestKairosClient(unittest.TestCase):
     def test_post_metrics(self, mock_request):
         client = create_api_client()
         mocked_query = sample_query()
-        client.query_metrics(data=mocked_query)
+        client.query_metrics_json(data=mocked_query)
         mock_request.return_value.request.assert_called_once()
         mock_request.return_value.request.assert_called_with(
             "POST",
