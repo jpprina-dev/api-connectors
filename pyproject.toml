@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "api-connectors"
-version = "0.1.0"
+version = "0.1.1"
 description = "'api-connectors' is a Python package created to handle API connections."
 readme = "README.md"
 authors = ["jpprina-dev <jpprina@gmail.com>"]
