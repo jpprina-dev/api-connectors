@@ -1,5 +1,8 @@
+from typing import List, Union
+
 import fnmatch
 import logging
+from datetime import datetime
 
 from api_connectors.APIClient import APIClient
 
@@ -112,7 +115,7 @@ class KairosDBAPIClient(APIClient):
         return matched_metrics
 
     def query_metrics_json(self, data):
-        """Get metrics data points by kairos json
+        """Get metrics data points by KairosDB json
 
         :param dict data: Data to post for query
         :return: Metric data points as :class:`dict`
@@ -120,6 +123,35 @@ class KairosDBAPIClient(APIClient):
         .. seealso:: \
             https://kairosdb.github.io/docs/restapi/QueryMetrics.html
         """
+        response = self.post("datapoints/query", data=data)
+        logger.debug(f"{self._log_header} query_metrics: {response}")
+        return response
+
+    def query_metrics(
+        self, metrics: Union[str, list[str]], start_datetime: str, end_datetime: str
+    ) -> dict:
+        """Get metrics data points. Both the start and end datetimes are inclusive,
+        meaning that data points falling on either the start or end timestamp will be
+        included in the query response.
+
+        :param metrics: metric or metrics to query
+        :type metrics: Union[str, List[str]]
+        :param start_datetime: start date and time to query in '%d/%m/%Y %H:%M:%S' format
+        :type start_datetime: str
+        :param end_datetime: end date and time to query in '%d/%m/%Y %H:%M:%S' format
+        :type end_datetime: str
+        :return: Metric data points as :class:`dict`
+        :rtype: dict
+        """
+        if not isinstance(metrics, list):
+            metrics = [metrics]
+        # TODO: Update the whole function in a Pydantic manner
+        start_ms = datetime.strptime(start_datetime, "%d/%m/%Y %H:%M:%S").timestamp() * 1000
+        end_ms = datetime.strptime(end_datetime, "%d/%m/%Y %H:%M:%S").timestamp() * 1000
+
+        data = {"plugins": [], "cache_time": 0, "start_absolute": start_ms, "end_absolute": end_ms}
+
+        data.update({"metrics": [{"tags": {}, "name": name} for name in metrics]})
         response = self.post("datapoints/query", data=data)
         logger.debug(f"{self._log_header} query_metrics: {response}")
         return response
