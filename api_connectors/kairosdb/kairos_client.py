@@ -163,7 +163,6 @@ class KairosDBAPIClient(APIClient):
         response = self.post("datapoints/query", data=data)
         logger.debug(f"{self._log_header} query_metrics: {response}")
         # TODO: return_code not handled
-        response.pop("return_code")
         return response
 
     def delete_metric(self, metric_name):

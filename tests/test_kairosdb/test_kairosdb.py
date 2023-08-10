@@ -132,8 +132,9 @@ class TestKairosClient(unittest.TestCase):
         client = create_api_client()
         mocked_query = sample_json("sample_query_1.json")
         mocked_respose = sample_json("sample_response_1.json")
+        status_code = 200
         mock_request.return_value.request.return_value = MagicMock(
-            status_code=200, json=lambda: mocked_respose
+            status_code=status_code, json=lambda: mocked_respose
         )
         response = client.query_metrics(
             TEST_METRIC_NAMES[0], TEST_START_DATETIME, TEST_END_DATETIME
@@ -147,6 +148,7 @@ class TestKairosClient(unittest.TestCase):
             timeout=TEST_TIMEOUT,
             verify=TEST_SSL,
         )
+        mocked_respose.update({"return_code": status_code})
         self.assertEqual(response, mocked_respose)
 
     @patch("api_connectors.APIClient.requests.Session")
@@ -154,8 +156,9 @@ class TestKairosClient(unittest.TestCase):
         client = create_api_client()
         mocked_query = sample_json("sample_query_2.json")
         mocked_respose = sample_json("sample_response_2.json")
+        status_code = 200
         mock_request.return_value.request.return_value = MagicMock(
-            status_code=200, json=lambda: mocked_respose
+            status_code=status_code, json=lambda: mocked_respose
         )
         response = client.query_metrics(TEST_METRIC_NAMES, TEST_START_DATETIME, TEST_END_DATETIME)
         mock_request.return_value.request.assert_called_once()
@@ -167,6 +170,7 @@ class TestKairosClient(unittest.TestCase):
             timeout=TEST_TIMEOUT,
             verify=TEST_SSL,
         )
+        mocked_respose.update({"return_code": status_code})
         self.assertEqual(response, mocked_respose)
 
 
