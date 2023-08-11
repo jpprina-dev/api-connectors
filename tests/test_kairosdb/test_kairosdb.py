@@ -9,9 +9,8 @@ import pytest
 from api_connectors.kairosdb import KairosDBAPIClient
 from tests import ROOT_DIR
 
-TEST_URL = "http://test-url"
+TEST_URL = "http://test-url:8080"
 TEST_ENDPOINT = "api/v1"
-TEST_PORT = 8080
 TEST_SSL = None
 TEST_TIMEOUT = None
 TEST_HEADERS = {
@@ -20,12 +19,12 @@ TEST_HEADERS = {
     "User-Agent": "python-kairosdb",
 }
 TEST_METRIC_NAMES = ["abc.123", "xyz.456"]
-TEST_START_DATETIME = "03-08-2023 12:13:14"
-TEST_END_DATETIME = "10-08-2023 12:13:14"
+TEST_START_DATETIME = "2023-08-03 12:13:14"
+TEST_END_DATETIME = "2023-08-10 12:13:14"
 
 
 def build_url(path):
-    return f"{TEST_URL}:{TEST_PORT}/{TEST_ENDPOINT}/{path}"
+    return f"{TEST_URL}/{TEST_ENDPOINT}/{path}"
 
 
 def create_api_client():

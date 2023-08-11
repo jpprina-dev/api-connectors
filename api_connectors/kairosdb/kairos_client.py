@@ -55,11 +55,11 @@ class KairosDBAPIClient(APIClient):
             https://kairosdb.github.io/docs/restapi/ListTagValues.html
     """
 
-    def __init__(self, *args, port=8080, api_version=1, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Initialization method"""
         super().__init__(*args, **kwargs)
         self.request_headers.update({"User-Agent": "python-kairosdb"})
-        self.api_endpoint = f"{self.api_endpoint}:{port}/api/v{api_version}"
+        self.api_endpoint = f"{self.api_endpoint}/api/v1"
 
         self._metricnames = None
         self._log_header = "[KAIROSDB API]"
@@ -94,7 +94,7 @@ class KairosDBAPIClient(APIClient):
             self._metricnames = response.get("results")
         return self._metricnames
 
-    def search_metrics(self, matches, exclude_matches=None):
+    def search_metrics(self, matches, exclude_matches=[]):
         """Search KairosDB metrics using glob matches
 
         :param list matches: List of glob matches
@@ -136,9 +136,9 @@ class KairosDBAPIClient(APIClient):
 
         :param metrics: metric or metrics to query
         :type metrics: Union[str, List[str]]
-        :param start_datetime: start date and time to query in '%d-%m-%Y %H:%M:%S' format
+        :param start_datetime: start date and time to query in '%Y-%m-%d %H:%M:%S' format
         :type start_datetime: str
-        :param end_datetime: end date and time to query in '%d-%m-%Y %H:%M:%S' format
+        :param end_datetime: end date and time to query in '%Y-%m-%d %H:%M:%S' format
         :type end_datetime: str
         :return: Metric data points as :class:`dict`
         :rtype: dict
@@ -156,9 +156,9 @@ class KairosDBAPIClient(APIClient):
 
         # TODO: Update the whole function in a Pydantic manner
         start_ms: int = int(
-            datetime.strptime(start_datetime, "%d-%m-%Y %H:%M:%S").timestamp() * 1000
+            datetime.strptime(start_datetime, "%Y-%m-%d %H:%M:%S").timestamp() * 1000
         )
-        end_ms: int = int(datetime.strptime(end_datetime, "%d-%m-%Y %H:%M:%S").timestamp() * 1000)
+        end_ms: int = int(datetime.strptime(end_datetime, "%Y-%m-%d %H:%M:%S").timestamp() * 1000)
         data = {
             "metrics": [{"tags": {}, "name": name} for name in _metrics],
             "plugins": [],
