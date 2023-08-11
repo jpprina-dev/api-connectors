@@ -3,7 +3,7 @@ import json
 from api_connectors.kairosdb import KairosDBAPIClient
 
 if __name__ == "__main__":
-    API_ENDPOINT = "http://10.110.228.143:8080"
+    API_ENDPOINT = "http://<ip>:<port>"
     kairos_api = KairosDBAPIClient(api_endpoint=API_ENDPOINT)
 
     print(f"{kairos_api.version}")
