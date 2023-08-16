@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "api-connectors"
-version = "0.1.0"
+version = "0.1.1"
 description = "'api-connectors' is a Python package created to handle API connections."
 readme = "README.md"
 authors = ["jpprina-dev <jpprina@gmail.com>"]
@@ -42,7 +42,7 @@ mypy-extensions = "^0.4.3"
 pre-commit = "^2.15.0"
 pydocstyle = "^6.1.1"
 pylint = "^2.11.1"
-pytest = "^6.2.5"
+pytest = ">=7"
 pyupgrade = "^2.29.1"
 safety = "^1.10.3"
 coverage = "^6.1.2"
@@ -113,13 +113,18 @@ warn_unused_ignores = true
 
 
 [tool.pytest.ini_options]
-# https://docs.pytest.org/en/6.2.x/customize.html#pyproject-toml
+# https://docs.pytest.org/en/7.4.x/customize.html#pyproject-toml
 # Directories that are not visited by pytest collector:
+pythonpath = ". pytest"
 norecursedirs =["hooks", "*.egg", ".eggs", "dist", "build", "docs", ".tox", ".git", "__pycache__"]
 doctest_optionflags = ["NUMBER", "NORMALIZE_WHITESPACE", "IGNORE_EXCEPTION_DETAIL"]
+testpaths = [
+    "tests"
+]
 
 # Extra options:
 addopts = [
+  "--import-mode=importlib",
   "--strict-markers",
   "--tb=short",
   "--doctest-modules",

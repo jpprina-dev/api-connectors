@@ -1,0 +1,12 @@
+{
+  "metrics": [
+    {
+      "tags": {},
+      "name": "abc.123"
+    }
+  ],
+  "plugins": [],
+  "cache_time": 0,
+  "start_absolute": 1691075594000,
+  "end_absolute": 1691680394000
+}
